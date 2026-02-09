@@ -1,0 +1,124 @@
+{
+  "users": [
+    {
+      "name": "admin",
+      "password": "admin",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "analytics"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "analytics",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [],
+  "queues": [
+    {
+      "name": "orders.processing",
+      "vhost": "analytics",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "orders.reprocess",
+      "vhost": "analytics",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "events.ingest",
+      "vhost": "analytics",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "payment.ingest",
+      "vhost": "analytics",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "domain.events",
+      "vhost": "analytics",
+      "destination": "events.ingest",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "source": "payment.events",
+      "vhost": "analytics",
+      "destination": "payment.ingest",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ],
+  "parameters": [
+    {
+      "vhost": "analytics",
+      "component": "federation-upstream",
+      "name": "upstream-orders",
+      "value": {
+        "uri": "amqp://admin:admin@rabbit-a/orders",
+        "expires": 3600000
+      }
+    },
+    {
+      "vhost": "analytics",
+      "component": "federation-upstream",
+      "name": "upstream-payments",
+      "value": {
+        "uri": "amqp://admin:admin@rabbit-a/payments",
+        "expires": 3600000
+      }
+    }
+  ],
+  "policies": [
+    {
+      "vhost": "analytics",
+      "name": "federate-domain-events",
+      "pattern": "^domain\\.events$",
+      "apply-to": "exchanges",
+      "definition": {
+        "federation-upstream": "upstream-orders"
+      },
+      "priority": 0
+    },
+    {
+      "vhost": "analytics",
+      "name": "federate-payment-events",
+      "pattern": "^payment\\.events$",
+      "apply-to": "exchanges",
+      "definition": {
+        "federation-upstream": "upstream-payments"
+      },
+      "priority": 0
+    }
+  ]
+}

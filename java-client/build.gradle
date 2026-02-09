@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'ru.findabair'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // RabbitMQ Java Client
+    implementation 'com.rabbitmq:amqp-client:5.27.0'
+
+    // Логирование
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
+
+    // JSON поддержка
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
+    // Lombok (опционально, для уменьшения boilerplate кода)
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClass = 'ru.findabair.Producer'
+}
+
+// Для удобного запуска разных классов
+tasks.register('runConsumer', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ru.findabair.Consumer'
+}
+
+tasks.register('runProducer', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'ru.findabair.Producer'
+}

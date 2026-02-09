@@ -1,0 +1,33 @@
+services:
+  rabbitmq1:
+    image: rabbitmq:3.10-management
+    container_name: plugins1
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq-data1:/var/lib/rabbitmq/mnesia
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./plugins/rabbitmq_delayed_message_exchange-3.10.2.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.10.2.ez
+  rabbitmq2:
+    image: rabbitmq:3.10-management
+    container_name: plugins2
+    ports:
+      - "5674:5672"
+      - "15674:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq-data2:/var/lib/rabbitmq/mnesia
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./plugins/rabbitmq_delayed_message_exchange-3.10.2.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.10.2.ez
+
+volumes:
+  rabbitmq-data1:
+  rabbitmq-data2:

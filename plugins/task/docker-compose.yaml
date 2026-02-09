@@ -1,0 +1,29 @@
+services:
+  rabbit-a:
+    image: rabbitmq:3.10-management
+    container_name: rabbit-a
+    hostname: rabbit-a
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbit-a/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbit-a/definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq-data1:/var/lib/rabbitmq/mnesia
+
+  rabbit-b:
+    image: rabbitmq:3.10-management
+    container_name: rabbit-b
+    hostname: rabbit-b
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    volumes:
+      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./rabbit-b/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbit-b/definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq-data1:/var/lib/rabbitmq/mnesia
+volumes:
+  rabbitmq-data1:
+  rabbitmq-data2:

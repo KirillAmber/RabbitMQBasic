@@ -1,0 +1,81 @@
+{
+  "rabbit_version": "3.10.25",
+  "rabbitmq_version": "3.10.25",
+  "product_name": "RabbitMQ",
+  "product_version": "3.10.25",
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "Jd6UuWJ123Ie33+D+EGxMsAVmLggydV7yNRue43m8yaJFJwn",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "policies": [
+    {
+      "name": "fast-queue-policy",
+      "vhost": "/",
+      "pattern": "^q_fast_",
+      "apply-to": "queues",
+      "definition": {
+        "max-length": 1000,
+        "message-ttl": 30000
+      },
+      "priority": 0
+    },
+    {
+      "name": "complex-queue-policy",
+      "vhost": "/",
+      "pattern": "^q_complex_",
+      "apply-to": "queues",
+      "definition": {
+        "max-length": 10000,
+        "message-ttl": 600000
+      },
+      "priority": 0
+    }
+  ],
+  "queues": [
+    {
+      "name": "q_fast_orders",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "q_fast_payments",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "q_complex_orders",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false
+    },
+    {
+      "name": "q_complex_payments",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false
+    }
+  ]
+}

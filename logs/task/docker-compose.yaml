@@ -1,0 +1,18 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: food_delivery_rabbit
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq-logs:/var/log/rabbitmq
+volumes:
+  rabbitmq-logs:

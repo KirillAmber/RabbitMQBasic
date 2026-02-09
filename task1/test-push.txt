@@ -1,0 +1,23 @@
+echo 1. process.*.* → q_process
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"process.file.add_page\",\"payload\":\"test message\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"process.user.login\",\"payload\":\"test message\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+echo 2. *.api.* → q_backend_service
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"push.api.success\",\"payload\":\"api call\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"user.api.login\",\"payload\":\"api call\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+echo 3. push.* → q_push
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"push.get_messages\",\"payload\":\"push action\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{},\"routing_key\":\"push.send\",\"payload\":\"push action\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/message_exchange/publish
+
+echo 4. XLSX → q_process_xlsx
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{\"headers\":{\"File-Type\":\"xlsx\"}},\"routing_key\":\"process.file\",\"payload\":\"{\\\"file\\\":\\\"report.xlsx\\\",\\\"action\\\":\\\"process\\\"}\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/files_exchange/publish
+
+echo 5. XLS → q_process_xlsx
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{\"headers\":{\"File-Type\":\"xls\"}},\"routing_key\":\"process.file\",\"payload\":\"{\\\"file\\\":\\\"data.xls\\\",\\\"action\\\":\\\"process\\\"}\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/files_exchange/publish
+
+echo 6. CSV → q_process_csv
+curl -u guest:guest -X POST -H "Content-Type: application/json" -d "{\"properties\":{\"headers\":{\"File-Type\":\"csv\"}},\"routing_key\":\"process.file\",\"payload\":\"{\\\"file\\\":\\\"users.csv\\\",\\\"action\\\":\\\"process\\\"}\",\"payload_encoding\":\"string\"}" http://localhost:15673/api/exchanges/%2F/files_exchange/publish

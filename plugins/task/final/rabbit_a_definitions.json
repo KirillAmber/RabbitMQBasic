@@ -1,0 +1,142 @@
+{
+  "users": [
+    {
+      "name": "admin",
+      "password": "admin",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "orders"
+    },
+    {
+      "name": "payments"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "orders",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "payments",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "domain.events",
+      "vhost": "orders",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "payment.events",
+      "vhost": "payments",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "orders.legacy",
+      "vhost": "orders",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "orders.failed",
+      "vhost": "orders",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "orders.created",
+      "vhost": "orders",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "payment.completed",
+      "vhost": "payments",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "domain.events",
+      "vhost": "orders",
+      "destination": "orders.created",
+      "destination_type": "queue",
+      "routing_key": "order.created",
+      "arguments": {}
+    },
+    {
+      "source": "payment.events",
+      "vhost": "payments",
+      "destination": "payment.completed",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ],
+  "parameters": [
+    {
+      "vhost": "/",
+      "component": "shovel",
+      "name": "legacy-orders-shovel",
+      "value": {
+        "src-protocol": "amqp091",
+        "src-uri": "amqp://admin:admin@rabbit-a/orders",
+        "src-queue": "orders.legacy",
+        "dest-protocol": "amqp091",
+        "dest-uri": "amqp://admin:admin@rabbit-b/analytics",
+        "dest-queue": "orders.processing",
+        "ack-mode": "on-confirm"
+      }
+    },
+    {
+      "vhost": "/",
+      "component": "shovel",
+      "name": "failed-orders-shovel",
+      "value": {
+        "src-protocol": "amqp091",
+        "src-uri": "amqp://admin:admin@rabbit-a/orders",
+        "src-queue": "orders.failed",
+        "dest-protocol": "amqp091",
+        "dest-uri": "amqp://admin:admin@rabbit-b/analytics",
+        "dest-queue": "orders.reprocess",
+        "ack-mode": "on-confirm"
+      }
+    }
+  ],
+  "policies": []
+}

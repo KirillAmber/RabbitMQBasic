@@ -1,0 +1,281 @@
+{
+  "rabbit_version": "3.10.25",
+  "rabbitmq_version": "3.10.25",
+  "product_name": "RabbitMQ",
+  "product_version": "3.10.25",
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "XBVCBkfULYuT+fmmbXT59Kggk2rrZ1kS/v6NUulEWWO79m7I",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    },
+    {
+      "name": "orders_service",
+      "password_hash": "U2SQu3AYF7EJZV/EQK0HRgvLkk1EOIUbkU6u7IYRTz5arKG0",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
+      "limits": {}
+    },
+    {
+      "name": "analytics_service",
+      "password_hash": "76sSYa7R3chdHdSnyyCG0JxCTbF20N8sBZPwQjswX2cVqWSW",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
+      "limits": {}
+    },
+    {
+      "name": "notification_service",
+      "password_hash": "UbgtKpbUyoB0n3m6IzKFm37tIGsueQmF3zKZKy78xbvaO19j",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [],
+      "limits": {}
+    },
+    {
+      "name": "analytics_manager",
+      "password_hash": "kFfMUHXEEbwVh9CsdBqmqkA2I1q+M23XPdLM909mLlSQYH+X",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "management"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    },
+    {
+      "name": "shop"
+    },
+    {
+      "name": "analytics"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "guest",
+      "vhost": "shop",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "orders_service",
+      "vhost": "shop",
+      "configure": "^$",
+      "write": "^x_orders$",
+      "read": "^q_orders_processing$"
+    },
+    {
+      "user": "analytics_service",
+      "vhost": "shop",
+      "configure": "^$",
+      "write": "^$",
+      "read": "^(q_orders_history|q_billing_events|q_payment_events)$"
+    },
+    {
+      "user": "notification_service",
+      "vhost": "shop",
+      "configure": "^$",
+      "write": "^$",
+      "read": "^(q_email_notifications|q_sms_notifications)$"
+    },
+    {
+      "user": "analytics_manager",
+      "vhost": "analytics",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [
+    {
+      "user": "orders_service",
+      "vhost": "shop",
+      "exchange": "x_orders",
+      "write": "^order\\..*$",
+      "read": ".*"
+    }
+  ],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "cluster_name",
+      "value": "rabbit@rabbitmq"
+    }
+  ],
+  "policies": [],
+  "exchanges": [
+    {
+      "name": "x_orders",
+      "vhost": "shop",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "x_notifications",
+      "vhost": "shop",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "x_events",
+      "vhost": "analytics",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "q_orders_processing",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_orders_history",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_billing_events",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_payment_events",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_email_notifications",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_sms_notifications",
+      "vhost": "shop",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "q_analytics_events",
+      "vhost": "analytics",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_orders_processing",
+      "destination_type": "queue",
+      "routing_key": "order.placed",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_orders_processing",
+      "destination_type": "queue",
+      "routing_key": "order.cancelled",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_orders_history",
+      "destination_type": "queue",
+      "routing_key": "order.*",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_orders_history",
+      "destination_type": "queue",
+      "routing_key": "billing.*",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_orders_history",
+      "destination_type": "queue",
+      "routing_key": "payment.*",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_billing_events",
+      "destination_type": "queue",
+      "routing_key": "billing.*",
+      "arguments": {}
+    },
+    {
+      "source": "x_orders",
+      "vhost": "shop",
+      "destination": "q_payment_events",
+      "destination_type": "queue",
+      "routing_key": "payment.*",
+      "arguments": {}
+    },
+    {
+      "source": "x_notifications",
+      "vhost": "shop",
+      "destination": "q_email_notifications",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "x_notifications",
+      "vhost": "shop",
+      "destination": "q_sms_notifications",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "x_events",
+      "vhost": "analytics",
+      "destination": "q_analytics_events",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    }
+  ]
+}

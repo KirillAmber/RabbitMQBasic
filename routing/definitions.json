@@ -1,0 +1,196 @@
+{
+  "rabbit_version": "3.10.25",
+  "rabbitmq_version": "3.10.25",
+  "product_name": "RabbitMQ",
+  "product_version": "3.10.25",
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "ZtO+vLGjpfiwNkj/rJ2PaIR7LW8YtHl8OgC4VvV9Supzgl5m",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {
+      }
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [
+  ],
+  "parameters": [
+  ],
+  "global_parameters": [
+    {
+      "name": "internal_cluster_id",
+      "value": "rabbitmq-cluster-id-1AkCPKlg2vMAduSr5I9Knw"
+    }
+  ],
+  "policies": [
+  ],
+  "exchanges": [
+    {
+      "name": "x_iot_topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "x_iot_headers",
+      "vhost": "/",
+      "type": "headers",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "q_iot_all_stream",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "stream",
+        "x-max-age": "1m"
+      }
+    },
+    {
+      "name": "q_camera_analytics",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 60000
+      }
+    },
+    {
+      "name": "q_infra_north_west",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 60000
+      }
+    },
+    {
+      "name": "q_climate_center",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 60000
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "x_iot_headers",
+      "destination_type": "exchange",
+      "routing_key": "iot.data.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "q_iot_all_stream",
+      "destination_type": "queue",
+      "routing_key": "iot.data.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "q_camera_analytics",
+      "destination_type": "queue",
+      "routing_key": "iot.data.camera.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_headers",
+      "vhost": "/",
+      "destination": "q_camera_analytics",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {
+        "device_type": "camera"
+      }
+    },
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "q_infra_north_west",
+      "destination_type": "queue",
+      "routing_key": "iot.data.controller.north.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "q_infra_north_west",
+      "destination_type": "queue",
+      "routing_key": "iot.data.controller.west.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_headers",
+      "vhost": "/",
+      "destination": "q_infra_north_west",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {
+        "device_type": "controller",
+        "district": "north"
+      }
+    },
+    {
+      "source": "x_iot_headers",
+      "vhost": "/",
+      "destination": "q_infra_north_west",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {
+        "device_type": "controller",
+        "district": "west"
+      }
+    },
+    {
+      "source": "x_iot_topic",
+      "vhost": "/",
+      "destination": "q_climate_center",
+      "destination_type": "queue",
+      "routing_key": "iot.data.sensor.center.#",
+      "arguments": {}
+    },
+    {
+      "source": "x_iot_headers",
+      "vhost": "/",
+      "destination": "q_climate_center",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {
+        "device_type": "sensor",
+        "district": "center"
+      }
+    }
+  ]
+}

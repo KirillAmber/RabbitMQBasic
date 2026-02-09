@@ -1,0 +1,25 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: tls
+    ports:
+      # Обычные (незашифрованные) порты
+      - "5673:5672"
+      - "15673:15672"
+      # TLS-порты
+      - "5671:5671"
+      - "15671:15671"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      # Монтируем папку с сертификатами
+      - ./docker_certs:/etc/pki/tls/
+      # Монтируем конфигурацию RabbitMQ
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq-data:/var/lib/rabbitmq/mnesia
+      # Монтируем файл со списком плагинов
+      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+volumes:
+  rabbitmq-data:

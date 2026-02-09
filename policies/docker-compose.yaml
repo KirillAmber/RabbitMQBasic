@@ -1,0 +1,18 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq_policies
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq-data:/var/lib/rabbitmq/mnesia
+
+volumes:
+  rabbitmq-data:

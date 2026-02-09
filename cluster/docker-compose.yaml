@@ -1,0 +1,65 @@
+services:
+  rabbitmq1:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq1
+    hostname: rabbitmq1
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq1-data:/var/lib/rabbitmq/mnesia
+    networks:
+      - cluster_network
+  rabbitmq2:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq2
+    hostname: rabbitmq2
+    ports:
+      - "5674:5672"
+      - "15674:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq2-data:/var/lib/rabbitmq/mnesia
+  rabbitmq3:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq3
+    hostname: rabbitmq3
+    ports:
+      - "5675:5672"
+      - "15675:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq3-data:/var/lib/rabbitmq/mnesia
+  rabbitmq4:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq4
+    hostname: rabbitmq4
+    ports:
+      - "5676:5672"
+      - "15676:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq4-data:/var/lib/rabbitmq/mnesia
+
+volumes:
+  rabbitmq1-data:
+  rabbitmq2-data:
+  rabbitmq3-data:
+  rabbitmq4-data:
