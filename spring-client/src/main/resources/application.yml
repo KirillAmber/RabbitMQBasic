@@ -1,0 +1,24 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1000   # первая пауза 1 секунда
+          multiplier: 2.0          # каждая следующая пауза × 2
+          max-interval: 10000      # максимальная пауза 10 секунд
+        acknowledge-mode: manual
+        concurrency: 3       # минимальное число потоков
+        max-concurrency: 10  # максимальное число потоков
+    publisher-confirm-type: correlated
+    publisher-returns: true
+logging:
+  level:
+    org.springframework.amqp: DEBUG
+    org.springframework.rabbit: DEBUG

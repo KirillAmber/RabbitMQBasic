@@ -1,0 +1,52 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+  cloud:
+    function:
+      definition: processOrder;auditOrder;confirmOrder;processOrderDlq
+    stream:
+      dynamic-destination-cache-size: 50
+      bindings:
+        processOrder-in-0:
+          destination: x_orders
+          group: q_orders_service
+          content-type: application/json
+          consumer:
+            max-attempts: 3
+            back-off-initial-interval: 1000
+            back-off-multiplier: 2.0
+            back-off-max-interval: 10000
+        auditOrder-in-0:
+          destination: x_orders
+          group: q_audit_service
+          content-type: application/json
+        confirmOrder-in-0:
+          destination: x_orders
+          group: q_confirm_service
+          content-type: application/json
+        confirmOrder-out-0:
+          destination: x_orders_confirmations
+          content-type: application/json
+        processOrderDlq-in-0:
+          destination: x_orders.q_orders_service.dlq
+          group: q_orders_dlq_service
+        orderEvents-out-0:
+          destination: x_orders
+          content-type: application/json
+      rabbit:
+        bindings:
+          processOrder-in-0:
+            consumer:
+              auto-bind-dlq: true
+              dlq-ttl: 60000
+              dlq-dead-letter-exchange: x_orders
+          auditOrder-in-0:
+            consumer:
+              auto-bind-dlq: true
+          confirmOrder-in-0:
+            consumer:
+              auto-bind-dlq: true
