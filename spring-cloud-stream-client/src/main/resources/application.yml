@@ -7,7 +7,12 @@ spring:
     virtual-host: /
   cloud:
     function:
-      definition: processOrder;auditOrder;confirmOrder;processOrderDlq
+      definition: >
+        processOrder;auditOrder;confirmOrder;
+        processOrderDlq;validateOrder|confirmOrder
+      bindings:
+        validateOrder|confirmOrder-in-0: orderPipelineInput
+        validateOrder|confirmOrder-out-0: orderPipelineOutput
     stream:
       dynamic-destination-cache-size: 50
       bindings:
@@ -37,6 +42,13 @@ spring:
         orderEvents-out-0:
           destination: x_orders
           content-type: application/json
+        orderPipelineInput:
+          destination: orders.pipeline
+          group: pipeline-service
+          content-type: application/json
+        orderPipelineOutput:
+          destination: orders.pipeline.out
+          content-type: application/json
       rabbit:
         bindings:
           processOrder-in-0:
@@ -44,9 +56,16 @@ spring:
               auto-bind-dlq: true
               dlq-ttl: 60000
               dlq-dead-letter-exchange: x_orders
+              requeue-rejected: false
           auditOrder-in-0:
             consumer:
               auto-bind-dlq: true
+              requeue-rejected: false
           confirmOrder-in-0:
             consumer:
               auto-bind-dlq: true
+              requeue-rejected: false
+          orderPipelineInput:
+            consumer:
+              auto-bind-dlq: true
+              requeue-rejected: false
